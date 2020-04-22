@@ -15,11 +15,18 @@ public class RenameFiles {
     public static void main(String[] args) {
         String path = args[0]+"\\";
         String csvFileName = args[1];
-        renameFiles(path,csvFileName);
+        boolean removeFiles = false;
+        if (args[2] != null) {
+            if (args[2].toUpperCase().equals("Y")){
+                System.out.println("REMOVE FILES IN THE END");
+                removeFiles = true;
+            }
+        }
+        renameFiles(path,csvFileName, removeFiles);
         System.out.println("***END OF EXECUTION***");
     }
 
-    private static void renameFiles(String path, String csvFileName) {
+    private static void renameFiles(String path, String csvFileName, boolean removeFiles) {
         Set<String> filesToRemove = new HashSet<>();
         try (CSVReader reader = new CSVReader(new FileReader(csvFileName))){
             String[] line;
@@ -34,16 +41,16 @@ public class RenameFiles {
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
-
-        for (String filename: filesToRemove) {
-            System.out.println("REMOVING " + filename);
-            try {
-                deleteFile(path,filename);
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (removeFiles) {
+            for (String filename: filesToRemove) {
+                System.out.println("REMOVING " + filename);
+                try {
+                    deleteFile(path,filename);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
     }
 
     private static void deleteFile(String path, String oldFileName) throws IOException {
